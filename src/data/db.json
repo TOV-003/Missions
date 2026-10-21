@@ -1,0 +1,197 @@
+{
+  "missions": [
+    {
+      "id": "aaaaaaaa-0000-4000-8000-000000000001",
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "title": "Ship onboarding flow",
+      "directive": "Finish the three-step onboarding screens and wire them to the auth state.",
+      "target_domain": "work",
+      "priority": "critical",
+      "deadline": "2026-10-26T17:00:00Z",
+      "notify_15_min": true,
+      "created_at": "2026-10-13T08:00:00Z",
+      "resolved_at": null
+    },
+    {
+      "id": "aaaaaaaa-0000-4000-8000-000000000002",
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "title": "Prepare quarterly tax documents",
+      "directive": "Collect all receipts and invoices for the period (paper, email, online orders, apps, cloud folders) in one place. Sort them by category (income, business expenses, travel, equipment, subscriptions) and by date. Scan or photograph paper receipts clearly, and give every file a consistent name. Build a simple spreadsheet of the key details, flagging anything unclear or missing. Send the full package to your accountant well before the deadline.",
+      "target_domain": "finance",
+      "priority": "critical",
+      "deadline": "2026-12-25T12:00:00Z",
+      "notify_15_min": true,
+      "created_at": "2026-10-13T08:00:00Z",
+      "resolved_at": null
+    },
+    {
+      "id": "aaaaaaaa-0000-4000-8000-000000000003",
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "title": "Morning workout routine",
+      "directive": "Complete the full-body routine and log the numbers.",
+      "target_domain": "health",
+      "priority": "medium",
+      "deadline": "2026-10-23T20:00:00Z",
+      "notify_15_min": false,
+      "created_at": "2026-10-13T08:00:00Z",
+      "resolved_at": null
+    },
+    {
+      "id": "aaaaaaaa-0000-4000-8000-000000000004",
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "title": "Learn TanStack Query caching",
+      "directive": "Work through the docs and refactor one screen to use query invalidation.",
+      "target_domain": "learning",
+      "priority": "medium",
+      "deadline": "2026-10-30T18:30:00Z",
+      "notify_15_min": false,
+      "created_at": "2026-10-13T08:00:00Z",
+      "resolved_at": null
+    },
+    {
+      "id": "aaaaaaaa-0000-4000-8000-000000000005",
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "title": "Plan weekend trip",
+      "directive": "Pick a destination, book transport and sort out accommodation.",
+      "target_domain": "personal",
+      "priority": "low",
+      "deadline": "2026-10-24T09:00:00Z",
+      "notify_15_min": true,
+      "created_at": "2026-10-23T08:00:00Z",
+      "resolved_at": "2026-10-20T08:00:00Z"
+    }
+  ],
+  "subtasks": [
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000001",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000001",
+      "title": "Design step 1 screen",
+      "position": 1,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000002",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000001",
+      "title": "Build step 2 form validation",
+      "position": 2,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000003",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000001",
+      "title": "Connect to auth state",
+      "position": 3,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000004",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000002",
+      "title": "Collect receipts",
+      "position": 1,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000005",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000002",
+      "title": "Export invoices",
+      "position": 2,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000006",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000002",
+      "title": "Send folder to accountant",
+      "position": 3,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000007",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000003",
+      "title": "Warm up 10 minutes",
+      "position": 1,
+      "is_done": true
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000008",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000003",
+      "title": "Strength circuit",
+      "position": 2,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000009",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000003",
+      "title": "Stretch and log results",
+      "position": 3,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000010",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000004",
+      "title": "Read caching docs",
+      "position": 1,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000011",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000004",
+      "title": "Refactor missions list query",
+      "position": 2,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000012",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000004",
+      "title": "Add mutation invalidation",
+      "position": 3,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000013",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000005",
+      "title": "Shortlist destinations",
+      "position": 1,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000014",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000005",
+      "title": "Compare transport options",
+      "position": 2,
+      "is_done": false
+    },
+    {
+      "id": "bbbbbbbb-0000-4000-8000-000000000015",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000005",
+      "title": "Book accommodation",
+      "position": 3,
+      "is_done": false
+    }
+  ],
+  "daily_commitments": [
+    {
+      "id": "cccccccc-0000-4000-8000-000000000001",
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000001",
+      "commited_at": "2026-10-21T08:05:00Z"
+    },
+    {
+      "id": "cccccccc-0000-4000-8000-000000000002",
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000003",
+      "commited_at": "2026-10-21T08:05:00Z"
+    },
+    {
+      "id": "cccccccc-0000-4000-8000-000000000003",
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000002",
+      "commited_at": "2026-10-21T08:05:00Z"
+    },
+    {
+      "id": "cccccccc-0000-4000-8000-000000000004",
+      "user_id": "11111111-1111-4111-8111-111111111111",
+      "mission_id": "aaaaaaaa-0000-4000-8000-000000000005",
+      "commited_at": "2026-10-21T08:05:00Z"
+    }
+  ]
+}
