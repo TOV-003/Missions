@@ -142,6 +142,26 @@ const editborderless = `<svg width="16" height="16" viewBox="0 0 16 16" fill="no
 </svg>
 `;
 
+const bolt = `<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_336_1718)">
+<rect width="40" height="40" fill="white" shape-rendering="crispEdges"/>
+<rect x="1" y="1" width="38" height="38" stroke="#121212" stroke-width="2" shape-rendering="crispEdges"/>
+<path d="M20.8333 11.6667L12.5 21.6667H20L19.1667 28.3333L27.5 18.3333H20L20.8333 11.6667V11.6667" fill="#121212"/>
+</g>
+<defs>
+<filter id="filter0_d_336_1718" x="0" y="0" width="42" height="42" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="2" dy="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.0705882 0 0 0 0 0.0705882 0 0 0 0 0.0705882 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_336_1718"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_336_1718" result="shape"/>
+</filter>
+</defs>
+</svg>
+`;
+
 export function Clock({ size = 40 }: { size?: number }) {
   return <SvgXml xml={clock} width={size} height={size} />;
 }
@@ -177,4 +197,7 @@ export function SubtaskDone({ size = 66 }: { size?: number }) {
 }
 export function SubtaskPending({ size = 66 }: { size?: number }) {
   return <SvgXml xml={subtaskpending} width={size} />;
+}
+export function Bolt({ size = 66 }: { size?: number }) {
+  return <SvgXml xml={bolt} width={size} />;
 }

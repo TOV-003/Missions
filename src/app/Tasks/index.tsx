@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Logo from "@/components/Logo";
-import { Calendar, Clock } from "@/components/Icons";
 import { msC } from "@/app/index";
 import TaskCard from "@/components/TaskCard";
 import { TaskCardProps, Subtask, DailyList } from "@/components/TaskCard";

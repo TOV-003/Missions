@@ -5,6 +5,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { msC } from "@/app/index";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 const queryClient = new QueryClient();
 
@@ -27,60 +28,62 @@ export default function RootLayout() {
   if (!loaded && !error) return null;
   return (
     <QueryClientProvider client={queryClient}>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarShowLabel: true,
-          tabBarLabelPosition: "beside-icon",
-          tabBarActiveTintColor: "#000",
-          tabBarInactiveTintColor: "#000",
-          tabBarActiveBackgroundColor: "#8FD3FF",
-          tabBarInactiveBackgroundColor: "#EFF2F4",
-
-          tabBarStyle: {
-            backgroundColor: "#fff",
-            borderTopWidth: msC(2),
-            borderTopColor: "black",
-            elevation: 0,
-            paddingHorizontal: msC(4),
-            paddingTop: msC(8),
-            height: msC(64),
-            paddingBottom: msC(12),
-          },
-          tabBarItemStyle: {
-            borderWidth: msC(2),
-            borderColor: "#000",
-            marginHorizontal: msC(4),
-            marginBottom: msC(8),
-          },
-          tabBarLabelStyle: {
-            fontFamily: "Outfit-Bold",
-            fontSize: msC(13),
-            textTransform: "uppercase",
-          },
-          tabBarIconStyle: { display: "none" },
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            href: null,
-            tabBarStyle: { display: "none" },
+      <KeyboardProvider>
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+            tabBarShowLabel: true,
+            tabBarLabelPosition: "beside-icon",
+            tabBarActiveTintColor: "#000",
+            tabBarInactiveTintColor: "#000",
+            tabBarActiveBackgroundColor: "#8FD3FF",
+            tabBarInactiveBackgroundColor: "#EFF2F4",
+            tabBarHideOnKeyboard: true,
+            tabBarStyle: {
+              backgroundColor: "#fff",
+              borderTopWidth: msC(2),
+              borderTopColor: "black",
+              elevation: 0,
+              paddingHorizontal: msC(4),
+              paddingTop: msC(8),
+              height: msC(64),
+              paddingBottom: msC(12),
+            },
+            tabBarItemStyle: {
+              borderWidth: msC(2),
+              borderColor: "#000",
+              marginHorizontal: msC(4),
+              marginBottom: msC(8),
+            },
+            tabBarLabelStyle: {
+              fontFamily: "Outfit-Bold",
+              fontSize: msC(13),
+              textTransform: "uppercase",
+            },
+            tabBarIconStyle: { display: "none" },
           }}
-        />
-        <Tabs.Screen
-          name="Tasks"
-          options={{
-            title: "Tasks",
-          }}
-        />
-        <Tabs.Screen
-          name="newTask"
-          options={{
-            title: "New Task",
-          }}
-        />
-      </Tabs>
+        >
+          <Tabs.Screen
+            name="index"
+            options={{
+              href: null,
+              tabBarStyle: { display: "none" },
+            }}
+          />
+          <Tabs.Screen
+            name="Tasks"
+            options={{
+              title: "Tasks",
+            }}
+          />
+          <Tabs.Screen
+            name="newTask"
+            options={{
+              title: "New Task",
+            }}
+          />
+        </Tabs>
+      </KeyboardProvider>
     </QueryClientProvider>
   );
 }
