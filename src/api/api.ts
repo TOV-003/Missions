@@ -1,12 +1,14 @@
-import { TaskCardProps, Subtask, DailyList } from "@/components/TaskCard";
+import { TaskCardProps, Subtask, DailyList } from "@/components/interfaces";
+
+const database = "http://192.168.1.66:8000";
 
 export async function getMissions() {
   const [missionsRes, resolved, subtasksRes, daily_commitments] =
     await Promise.all([
-      fetch("http://192.168.1.65:8000/missions?resolved_at=null"),
-      fetch("http://192.168.1.65:8000/missions?resolved_at:ne=null"),
-      fetch("http://192.168.1.65:8000/subtasks"),
-      fetch("http://192.168.1.65:8000/daily_commitments"),
+      fetch(`${database}/missions?resolved_at=null`),
+      fetch(`${database}/missions?resolved_at:ne=null`),
+      fetch(`${database}/subtasks`),
+      fetch(`${database}/daily_commitments`),
     ]);
   if (!missionsRes.ok || !subtasksRes.ok) {
     throw new Error("Failed to fetch missions or subtasks");

@@ -1,32 +1,7 @@
 import { View, Text } from "react-native";
 import { ms } from "react-native-size-matters";
 import { Clock, Calendar } from "@/components/Icons";
-
-export interface Subtask {
-  id: string;
-  mission_id: string;
-  title: string;
-  position: number;
-  is_done: boolean;
-}
-
-export interface DailyList {
-  id: string;
-  user_id: string;
-  mission_id: string;
-  commited_at: string;
-}
-
-export interface TaskCardProps {
-  id: string;
-  title: string;
-  priority: "low" | "medium" | "critical";
-  target_domain: string;
-  deadline: string;
-  resolved_at: string | null;
-  resolved_subtasks: Subtask[];
-  all_subtasks: Subtask[];
-}
+import { TaskCardProps } from "./interfaces";
 
 export default function TaskCard({
   id,

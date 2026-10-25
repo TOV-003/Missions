@@ -10,11 +10,12 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Logo from "@/components/Logo";
 import { msC } from "@/app/index";
 import TaskCard from "@/components/TaskCard";
-import { TaskCardProps, Subtask, DailyList } from "@/components/TaskCard";
-import { useState } from "react";
+import { TaskCardProps, Subtask, DailyList } from "@/components/interfaces";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useMissions } from "@/hooks/useMissions";
 import { Link } from "expo-router";
+import { LoaderDots } from "@/components/LoaderDots";
 
 export default function Tasks() {
   const [allTasks, setAllTasks] = useState<TaskCardProps[]>([]);
@@ -32,9 +33,67 @@ export default function Tasks() {
     setDisplay("pending");
   }
 
-  const { data, isPending, error } = useMissions();
-  if (isPending) return <Text>Loading…</Text>;
-  if (error) return <Text>{error.message}</Text>;
+  const { data, isPending, error, refetch } = useMissions();
+  if (isPending)
+    return (
+      <SafeAreaView>
+        <ScrollView
+          contentContainerStyle={{
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+          }}
+        >
+          <LoaderDots />
+        </ScrollView>
+      </SafeAreaView>
+    );
+  if (error)
+    return (
+      <SafeAreaView>
+        <ScrollView
+          contentContainerStyle={{
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "Outfit-Bold",
+              fontSize: msC(32),
+              textAlign: "center",
+              alignSelf: "center",
+            }}
+          >
+            {error.message}
+          </Text>
+          <Pressable
+            onPress={() => refetch()}
+            style={{
+              backgroundColor: "#8AD8FF",
+              paddingHorizontal: msC(12),
+              paddingVertical: msC(6),
+              borderWidth: msC(2),
+              shadowColor: "#000",
+              shadowOffset: { width: msC(2), height: msC(2) },
+              shadowOpacity: 1,
+              shadowRadius: 0,
+              alignSelf: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: "Outfit-Bold",
+                fontSize: msC(20),
+              }}
+            >
+              Reload
+            </Text>
+          </Pressable>
+        </ScrollView>
+      </SafeAreaView>
+    );
   console.log(data);
   const allDaily = data.dailyMissionsWithSubtasks;
   const pendingDaily = allDaily.filter(

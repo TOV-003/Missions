@@ -162,6 +162,61 @@ const bolt = `<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns=
 </svg>
 `;
 
+const no = `<svg width="58" height="34" viewBox="0 0 58 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_465_6)">
+<rect width="56" height="32" fill="#E7E5DF" shape-rendering="crispEdges"/>
+<rect x="1" y="1" width="54" height="30" stroke="#121212" stroke-width="2" shape-rendering="crispEdges"/>
+<rect x="5" y="5" width="22" height="22" fill="white"/>
+<rect x="5" y="5" width="22" height="22" stroke="#121212" stroke-width="2"/>
+</g>
+<defs>
+<filter id="filter0_d_465_6" x="0" y="0" width="58" height="34" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="2" dy="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.0705882 0 0 0 0 0.0705882 0 0 0 0 0.0705882 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_465_6"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_465_6" result="shape"/>
+</filter>
+</defs>
+</svg>
+`;
+
+const yes = `<svg width="58" height="34" viewBox="0 0 58 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_336_1866)">
+<rect width="56" height="32" fill="#8AD8FF" shape-rendering="crispEdges"/>
+<rect x="1" y="1" width="54" height="30" stroke="#121212" stroke-width="2" shape-rendering="crispEdges"/>
+<rect x="29" y="5" width="22" height="22" fill="white"/>
+<rect x="29" y="5" width="22" height="22" stroke="#121212" stroke-width="2"/>
+</g>
+<defs>
+<filter id="filter0_d_336_1866" x="0" y="0" width="58" height="34" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="2" dy="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.0705882 0 0 0 0 0.0705882 0 0 0 0 0.0705882 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_336_1866"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_336_1866" result="shape"/>
+</filter>
+</defs>
+</svg>
+`;
+
+const bell = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_336_1858)">
+<path d="M15 6.66669C15 3.90711 12.7596 1.66669 10 1.66669C7.24042 1.66669 5 3.90711 5 6.66669C5 12.5 2.5 14.1667 2.5 14.1667H17.5C17.5 14.1667 15 12.5 15 6.66669" stroke-width="1.66667" stroke="#121212"/>
+<path d="M11.4417 17.5C11.1435 18.014 10.5942 18.3304 9.99999 18.3304C9.40576 18.3304 8.85648 18.014 8.55832 17.5" stroke-width="1.66667" stroke="#121212"/>
+</g>
+<defs>
+<clipPath id="clip0_336_1858">
+<rect width="20" height="20" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+`;
+
 export function Clock({ size = 40 }: { size?: number }) {
   return <SvgXml xml={clock} width={size} height={size} />;
 }
@@ -192,6 +247,9 @@ export function Unchecked({ size = 40 }: { size?: number }) {
 export function Check({ size = 40 }: { size?: number }) {
   return <SvgXml xml={check} width={size} height={size} />;
 }
+export function Bell({ size = 40 }: { size?: number }) {
+  return <SvgXml xml={bell} width={size} height={size} />;
+}
 export function SubtaskDone({ size = 66 }: { size?: number }) {
   return <SvgXml xml={subtaskdone} width={size} />;
 }
@@ -200,4 +258,10 @@ export function SubtaskPending({ size = 66 }: { size?: number }) {
 }
 export function Bolt({ size = 66 }: { size?: number }) {
   return <SvgXml xml={bolt} width={size} />;
+}
+export function Yes({ size = 66 }: { size?: number }) {
+  return <SvgXml xml={yes} width={size} />;
+}
+export function No({ size = 66 }: { size?: number }) {
+  return <SvgXml xml={no} width={size} />;
 }

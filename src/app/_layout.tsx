@@ -73,13 +73,13 @@ export default function RootLayout() {
           <Tabs.Screen
             name="Tasks"
             options={{
-              title: "Tasks",
+              title: "Missions",
             }}
           />
           <Tabs.Screen
             name="newTask"
             options={{
-              title: "New Task",
+              title: "New Mission",
             }}
           />
         </Tabs>

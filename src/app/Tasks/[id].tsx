@@ -18,7 +18,7 @@ import {
 import { msC } from "@/app/index";
 import React from "react";
 import { useMissions } from "@/hooks/useMissions";
-import { TaskCardProps, Subtask } from "@/components/TaskCard";
+import { TaskCardProps, Subtask } from "@/components/interfaces";
 import Hr from "@/components/hr";
 
 export default function MissionDetails() {
@@ -63,7 +63,7 @@ export default function MissionDetails() {
           style={{ width: "100%", paddingHorizontal: msC(16) }}
           contentContainerStyle={{
             gap: msC(10),
-            marginTop: msC(10),
+            marginVertical: msC(10),
           }}
         >
           <View
@@ -468,7 +468,6 @@ export default function MissionDetails() {
             </Text>
           </View>
         </ScrollView>
-        <Text>MissionID: {id}</Text>
       </SafeAreaView>
     </SafeAreaProvider>
   );
