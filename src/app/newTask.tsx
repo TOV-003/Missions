@@ -7,7 +7,7 @@ import {
   Pressable,
   Alert,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { msC } from ".";
 import Logo from "@/components/Logo";
@@ -22,7 +22,8 @@ import {
 } from "@/components/Icons";
 import { Domain, Mission, Priority, Subtask } from "@/components/interfaces";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useSQLiteContext } from "expo-sqlite";
+import { useCreateMission } from "@/hooks/useMissions";
+import { router } from "expo-router";
 
 function toUtcIso(dateStr: string, timeStr: string): string | null {
   const dateOk = /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
@@ -46,6 +47,7 @@ function toUtcIso(dateStr: string, timeStr: string): string | null {
 }
 
 export default function NewTask() {
+  const { mutate, isPending } = useCreateMission();
   const DOMAINS = [
     "work",
     "study",
@@ -92,7 +94,7 @@ export default function NewTask() {
     setSubtaskText((prev) => prev.map((x, i) => (i === index ? value : x)));
   }
   function handleClearForm() {
-    setFormData((data) => ({
+    setFormData({
       id: "",
       title: "",
       directive: "",
@@ -102,19 +104,55 @@ export default function NewTask() {
       notify_60_min: false,
       created_at: "",
       resolved_at: null,
-    }));
+    });
+    setSubtaskText(["", "", "", ""]);
+    setDateStr("");
+    setTimeStr("");
   }
-  function handleSubmit() {
+  useEffect(() => {
     const iso = toUtcIso(dateStr, timeStr);
-    if (!iso) {
+    setFormData((data) => ({ ...data, deadline: iso ?? "" }));
+  }, [dateStr, timeStr]);
+  function handleSubmit() {
+    if (!formData.title.trim()) {
+      Alert.alert("Missing title", "Give your mission a title.");
+      return;
+    }
+    if (!formData.target_domain || !formData.priority) {
+      Alert.alert("Missing info", "Pick a domain and a priority.");
+      return;
+    }
+    if (!formData.deadline) {
       Alert.alert(
         "Invalid input",
         "Enter a valid date (YYYY-MM-DD) and time (HH:MM).",
       );
       return;
     }
+    if (new Date(formData.deadline) <= new Date()) {
+      Alert.alert("Invalid deadline", "The deadline must be in the future.");
+      return;
+    }
 
-    setFormData((data) => ({ ...data, deadline: iso }));
+    mutate(
+      {
+        missionData: {
+          ...formData,
+          title: formData.title.trim(),
+          directive: formData.directive.trim(),
+        },
+        subtaskData: subtaskText,
+      },
+      {
+        onSuccess: () => {
+          handleClearForm();
+            router.replace("/Tasks");
+        },
+        onError: () => {
+          Alert.alert("Error", "Couldn't create the mission. Try again.");
+        },
+      },
+    );
   }
 
   return (
@@ -731,7 +769,7 @@ export default function NewTask() {
                   color: "gray",
                 }}
               >
-                Push Notification 15 min prior to the Deadline
+                Push Notification 60 min prior to the Deadline
               </Text>
             </View>
             <Pressable onPress={toggleNotify60Min}>
@@ -742,7 +780,9 @@ export default function NewTask() {
               )}
             </Pressable>
           </View>
-          <View
+          <Pressable
+            onPress={handleSubmit}
+            disabled={isPending}
             style={{
               width: "100%",
               backgroundColor: "#8AD8FF",
@@ -756,12 +796,13 @@ export default function NewTask() {
               shadowOpacity: 1,
               shadowRadius: 0,
               padding: msC(16),
+              opacity: isPending ? 0.6 : 1,
             }}
           >
             <Text style={{ fontFamily: "Outfit-SemiBold", fontSize: msC(16) }}>
-              CREATE MISSION
+              {isPending ? "CREATING..." : "CREATE MISSION"}
             </Text>
-          </View>
+          </Pressable>
           <Pressable
             onPress={handleClearForm}
             style={{

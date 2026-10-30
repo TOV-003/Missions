@@ -464,33 +464,34 @@ export default function Tasks() {
                   You have no pending mission!
                 </Text>
               )}
-            {display === "pending" && (
-              <>
-                <Text
-                  style={{ fontFamily: "Outfit-SemiBold", fontSize: msC(12) }}
-                >
-                  Long press Mission to commit for today
-                </Text>
+            {display === "pending" &&
+              data?.missionsWithSubtasks.length !== 0 && (
                 <>
-                  {data?.missionsWithSubtasks
-                    .filter(
-                      (mission: TaskCardProps) =>
-                        mission.resolved_at === null &&
-                        mission.priority === "critical",
-                    )
-                    .map(renderMission)}
+                  <Text
+                    style={{ fontFamily: "Outfit-SemiBold", fontSize: msC(12) }}
+                  >
+                    Long press Mission to commit for today
+                  </Text>
+                  <>
+                    {data?.missionsWithSubtasks
+                      .filter(
+                        (mission: TaskCardProps) =>
+                          mission.resolved_at === null &&
+                          mission.priority === "critical",
+                      )
+                      .map(renderMission)}
+                  </>
+                  <>
+                    {data?.missionsWithSubtasks
+                      .filter(
+                        (mission: TaskCardProps) =>
+                          mission.resolved_at === null &&
+                          mission.priority !== "critical",
+                      )
+                      .map(renderMission)}
+                  </>
                 </>
-                <>
-                  {data?.missionsWithSubtasks
-                    .filter(
-                      (mission: TaskCardProps) =>
-                        mission.resolved_at === null &&
-                        mission.priority !== "critical",
-                    )
-                    .map(renderMission)}
-                </>
-              </>
-            )}
+              )}
           </View>
         </ScrollView>
       </SafeAreaView>

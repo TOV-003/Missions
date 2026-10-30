@@ -86,14 +86,14 @@ export async function getMission(db: SQLiteDatabase, id: string) {
 export async function createMission(
   db: SQLiteDatabase,
   missionData: Mission,
-  subtaskData: Subtask[] = [],
+  subtaskData: string[] = [],
 ) {
   const id = randomUUID();
 
   await db.withTransactionAsync(async () => {
     await db.runAsync(
       `INSERT INTO missions
-         (id, title, directive, target_domain, priority, deadline, notify_15_min, created_at)
+         (id, title, directive, target_domain, priority, deadline, notify_60_min, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
