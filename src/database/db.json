@@ -2,7 +2,6 @@
   "missions": [
     {
       "id": "aaaaaaaa-0000-4000-8000-000000000001",
-      "user_id": "11111111-1111-4111-8111-111111111111",
       "title": "Ship onboarding flow",
       "directive": "Finish the three-step onboarding screens and wire them to the auth state.",
       "target_domain": "work",
@@ -14,7 +13,6 @@
     },
     {
       "id": "aaaaaaaa-0000-4000-8000-000000000002",
-      "user_id": "11111111-1111-4111-8111-111111111111",
       "title": "Prepare quarterly tax documents",
       "directive": "Collect all receipts and invoices for the period (paper, email, online orders, apps, cloud folders) in one place. Sort them by category (income, business expenses, travel, equipment, subscriptions) and by date. Scan or photograph paper receipts clearly, and give every file a consistent name. Build a simple spreadsheet of the key details, flagging anything unclear or missing. Send the full package to your accountant well before the deadline.",
       "target_domain": "finance",
@@ -26,7 +24,6 @@
     },
     {
       "id": "aaaaaaaa-0000-4000-8000-000000000003",
-      "user_id": "11111111-1111-4111-8111-111111111111",
       "title": "Morning workout routine",
       "directive": "Complete the full-body routine and log the numbers.",
       "target_domain": "health",
@@ -38,7 +35,6 @@
     },
     {
       "id": "aaaaaaaa-0000-4000-8000-000000000004",
-      "user_id": "11111111-1111-4111-8111-111111111111",
       "title": "Learn TanStack Query caching",
       "directive": "Work through the docs and refactor one screen to use query invalidation.",
       "target_domain": "learning",
@@ -50,7 +46,6 @@
     },
     {
       "id": "aaaaaaaa-0000-4000-8000-000000000005",
-      "user_id": "11111111-1111-4111-8111-111111111111",
       "title": "Plan weekend trip",
       "directive": "Pick a destination, book transport and sort out accommodation.",
       "target_domain": "personal",
@@ -171,25 +166,21 @@
   "daily_commitments": [
     {
       "id": "cccccccc-0000-4000-8000-000000000001",
-      "user_id": "11111111-1111-4111-8111-111111111111",
       "mission_id": "aaaaaaaa-0000-4000-8000-000000000001",
       "commited_at": "2026-10-25T08:05:00Z"
     },
     {
       "id": "cccccccc-0000-4000-8000-000000000002",
-      "user_id": "11111111-1111-4111-8111-111111111111",
       "mission_id": "aaaaaaaa-0000-4000-8000-000000000003",
       "commited_at": "2026-10-25T08:05:00Z"
     },
     {
       "id": "cccccccc-0000-4000-8000-000000000003",
-      "user_id": "11111111-1111-4111-8111-111111111111",
       "mission_id": "aaaaaaaa-0000-4000-8000-000000000002",
       "commited_at": "2026-10-25T08:05:00Z"
     },
     {
       "id": "cccccccc-0000-4000-8000-000000000004",
-      "user_id": "11111111-1111-4111-8111-111111111111",
       "mission_id": "aaaaaaaa-0000-4000-8000-000000000005",
       "commited_at": "2026-10-25T08:05:00Z"
     }

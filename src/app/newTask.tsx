@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   Pressable,
+  Alert,
 } from "react-native";
 import { useState } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -21,6 +22,28 @@ import {
 } from "@/components/Icons";
 import { Domain, Mission, Priority, Subtask } from "@/components/interfaces";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { useSQLiteContext } from "expo-sqlite";
+
+function toUtcIso(dateStr: string, timeStr: string): string | null {
+  const dateOk = /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+  const timeOk = /^([01]\d|2[0-3]):[0-5]\d$/.test(timeStr);
+  if (!dateOk || !timeOk) return null;
+
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const [hh, mm] = timeStr.split(":").map(Number);
+
+  const date = new Date(y, m - 1, d, hh, mm);
+
+  if (
+    date.getFullYear() !== y ||
+    date.getMonth() !== m - 1 ||
+    date.getDate() !== d
+  ) {
+    return null;
+  }
+
+  return date.toISOString().replace(/\.\d{3}Z$/, "Z");
+}
 
 export default function NewTask() {
   const DOMAINS = [
@@ -37,32 +60,61 @@ export default function NewTask() {
   const PRIORITIES = ["low", "medium", "critical"];
   const [formData, setFormData] = useState<Mission>({
     id: "",
-    user_id: "",
     title: "",
     directive: "",
     target_domain: null,
     priority: null,
     deadline: "",
-    notify_15_min: false,
+    notify_60_min: false,
     created_at: "",
     resolved_at: null,
   });
-  const [subtaskData, setSubtaskData] = useState<Subtask[]>([]);
   const [subtaskText, setSubtaskText] = useState<string[]>(["", "", "", ""]);
   const [dateStr, setDateStr] = useState<string>("");
   const [timeStr, setTimeStr] = useState<string>("");
 
+  function handleTitle(titleText: string) {
+    setFormData((data) => ({ ...data, title: titleText }));
+  }
+  function handleDirective(directiveText: string) {
+    setFormData((data) => ({ ...data, directive: directiveText }));
+  }
   function handleDomain(domain: Domain) {
     setFormData((data) => ({ ...data, target_domain: domain }));
   }
   function handlePriority(priority: Priority) {
     setFormData((data) => ({ ...data, priority: priority }));
   }
-  function toggleNotify15Min() {
-    setFormData((data) => ({ ...data, notify_15_min: !data.notify_15_min }));
+  function toggleNotify60Min() {
+    setFormData((data) => ({ ...data, notify_60_min: !data.notify_60_min }));
   }
   function handleSubtaskText(index: number, value: string) {
     setSubtaskText((prev) => prev.map((x, i) => (i === index ? value : x)));
+  }
+  function handleClearForm() {
+    setFormData((data) => ({
+      id: "",
+      title: "",
+      directive: "",
+      target_domain: null,
+      priority: null,
+      deadline: "",
+      notify_60_min: false,
+      created_at: "",
+      resolved_at: null,
+    }));
+  }
+  function handleSubmit() {
+    const iso = toUtcIso(dateStr, timeStr);
+    if (!iso) {
+      Alert.alert(
+        "Invalid input",
+        "Enter a valid date (YYYY-MM-DD) and time (HH:MM).",
+      );
+      return;
+    }
+
+    setFormData((data) => ({ ...data, deadline: iso }));
   }
 
   return (
@@ -184,6 +236,8 @@ export default function NewTask() {
               }}
               underlineColorAndroid="transparent"
               placeholder="Enter your Mission title here..."
+              value={formData.title}
+              onChangeText={handleTitle}
             />
           </View>
           <View style={{ width: "100%" }}>
@@ -217,6 +271,8 @@ export default function NewTask() {
               }}
               underlineColorAndroid="transparent"
               placeholder="Enter your Mission directive here..."
+              value={formData.directive}
+              onChangeText={handleDirective}
             />
           </View>
           <View style={{ width: "100%" }}>
@@ -678,8 +734,8 @@ export default function NewTask() {
                 Push Notification 15 min prior to the Deadline
               </Text>
             </View>
-            <Pressable onPress={toggleNotify15Min}>
-              {formData.notify_15_min ? (
+            <Pressable onPress={toggleNotify60Min}>
+              {formData.notify_60_min ? (
                 <Yes size={msC(50)} />
               ) : (
                 <No size={msC(50)} />
@@ -706,7 +762,8 @@ export default function NewTask() {
               CREATE MISSION
             </Text>
           </View>
-          <View
+          <Pressable
+            onPress={handleClearForm}
             style={{
               width: "100%",
               backgroundColor: "#E7E5DF",
@@ -726,7 +783,7 @@ export default function NewTask() {
             <Text style={{ fontFamily: "Outfit-SemiBold", fontSize: msC(16) }}>
               DISCARD
             </Text>
-          </View>
+          </Pressable>
         </KeyboardAwareScrollView>
       </SafeAreaView>
     </SafeAreaProvider>

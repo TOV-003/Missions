@@ -1,80 +1,124 @@
-import { TaskCardProps, Subtask, DailyList } from "@/components/interfaces";
+import { type SQLiteDatabase } from "expo-sqlite";
+import { randomUUID } from "expo-crypto";
 
-const database = "http://192.168.1.66:8000";
+import {
+  TaskCardProps,
+  Mission,
+  Subtask,
+  DailyList,
+} from "@/components/interfaces";
 
-export async function getMissions() {
-  const [missionsRes, resolved, subtasksRes, daily_commitments] =
-    await Promise.all([
-      fetch(`${database}/missions?resolved_at=null`),
-      fetch(`${database}/missions?resolved_at:ne=null`),
-      fetch(`${database}/subtasks`),
-      fetch(`${database}/daily_commitments`),
-    ]);
-  if (!missionsRes.ok || !subtasksRes.ok) {
-    throw new Error("Failed to fetch missions or subtasks");
-  }
+const localDate = (d: string | Date) => new Date(d).toLocaleDateString("en-CA");
 
-  const byDeadline = (a: TaskCardProps, b: TaskCardProps) =>
-    new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
-
-  const missions = (await missionsRes.json()).sort(byDeadline);
-  const resolvedList = (await resolved.json()).sort(byDeadline);
-  const subtasks = await subtasksRes.json();
-  const dailyCommitments = await daily_commitments.json();
-  const allMissions = [...missions, ...resolvedList].sort(byDeadline);
-  function localDate(d: string | Date) {
-    return new Date(d).toLocaleDateString("en-CA");
-  }
-  const dailyList = allMissions.filter((mission: TaskCardProps) =>
-    dailyCommitments.some(
-      (el: DailyList) =>
-        el.mission_id === mission.id &&
-        localDate(el.commited_at) === localDate(new Date()),
+export async function getMissions(db: SQLiteDatabase) {
+  const [missions, subtaskRows, commitments] = await Promise.all([
+    db.getAllAsync<TaskCardProps>(
+      `SELECT * FROM missions ORDER BY deadline ASC`,
     ),
-  );
+    db.getAllAsync<any>(
+      `SELECT * FROM subtasks ORDER BY mission_id, position ASC`,
+    ),
+    db.getAllAsync<DailyList>(`SELECT * FROM daily_commitments`),
+  ]);
 
-  const missionsWithSubtasks = missions.map((mission: TaskCardProps) => {
-    const all_subtasks = subtasks.filter(
-      (s: Subtask) => s.mission_id === mission.id,
-    );
+  const subtasks: Subtask[] = subtaskRows.map((s) => ({
+    ...s,
+    is_done: s.is_done === 1,
+  }));
+
+  const subtasksByMission = new Map<string, Subtask[]>();
+  for (const s of subtasks) {
+    const list = subtasksByMission.get(s.mission_id) ?? [];
+    list.push(s);
+    subtasksByMission.set(s.mission_id, list);
+  }
+
+  const withSubtasks = (mission: TaskCardProps) => {
+    const all_subtasks = subtasksByMission.get(mission.id) ?? [];
     return {
       ...mission,
       all_subtasks,
-      resolved_subtasks: all_subtasks.filter(
-        (s: Subtask) => s.is_done === true,
-      ),
+      resolved_subtasks: all_subtasks.filter((s) => s.is_done),
     };
-  });
-  const dailyMissionsWithSubtasks = dailyList.map((mission: TaskCardProps) => {
-    const all_subtasks = subtasks.filter(
-      (s: Subtask) => s.mission_id === mission.id,
-    );
-    return {
-      ...mission,
-      all_subtasks,
-      resolved_subtasks: all_subtasks.filter(
-        (s: Subtask) => s.is_done === true,
-      ),
-    };
-  });
-  const resolvedMissionsWithSubtasks = resolvedList.map(
-    (mission: TaskCardProps) => {
-      const all_subtasks = subtasks.filter(
-        (s: Subtask) => s.mission_id === mission.id,
-      );
-      return {
-        ...mission,
-        all_subtasks,
-        resolved_subtasks: all_subtasks.filter(
-          (s: Subtask) => s.is_done === true,
-        ),
-      };
-    },
+  };
+
+  const active = missions.filter((m) => m.resolved_at === null);
+  const resolved = missions.filter((m) => m.resolved_at !== null);
+
+  const today = localDate(new Date());
+  const committedToday = new Set(
+    commitments
+      .filter((c) => localDate(c.committed_at) === today)
+      .map((c) => c.mission_id),
   );
+  const daily = missions.filter((m) => committedToday.has(m.id));
 
   return {
-    missionsWithSubtasks: missionsWithSubtasks,
-    dailyMissionsWithSubtasks: dailyMissionsWithSubtasks,
-    resolvedMissionsWithSubtasks: resolvedMissionsWithSubtasks,
+    missionsWithSubtasks: active.map(withSubtasks),
+    dailyMissionsWithSubtasks: daily.map(withSubtasks),
+    resolvedMissionsWithSubtasks: resolved.map(withSubtasks),
   };
+}
+
+export async function getMission(db: SQLiteDatabase, id: string) {
+  const [mission, subtaskRows] = await Promise.all([
+    db.getFirstAsync<Mission>(`SELECT * FROM missions WHERE id = ?`, [id]),
+    db.getAllAsync<any>(
+      `SELECT * FROM subtasks WHERE mission_id = ? ORDER BY position ASC`,
+      [id],
+    ),
+  ]);
+
+  if (!mission) return null;
+
+  const all_subtasks: Subtask[] = subtaskRows.map((s) => ({
+    ...s,
+    is_done: s.is_done === 1,
+  }));
+
+  return {
+    ...mission,
+    all_subtasks,
+    resolved_subtasks: all_subtasks.filter((s) => s.is_done),
+  };
+}
+
+export async function createMission(
+  db: SQLiteDatabase,
+  missionData: Mission,
+  subtaskData: Subtask[] = [],
+) {
+  const id = randomUUID();
+
+  await db.withTransactionAsync(async () => {
+    await db.runAsync(
+      `INSERT INTO missions
+         (id, title, directive, target_domain, priority, deadline, notify_15_min, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        missionData.title,
+        missionData.directive,
+        missionData.target_domain,
+        missionData.priority,
+        missionData.deadline,
+        missionData.notify_60_min ? 1 : 0,
+        new Date().toISOString(),
+      ],
+    );
+
+    const titles = subtaskData
+      .map((s) => String(s ?? "").trim())
+      .filter((s) => s !== "")
+      .slice(0, 4);
+
+    for (let i = 0; i < titles.length; i++) {
+      await db.runAsync(
+        `INSERT INTO subtasks (id, mission_id, title, position) VALUES (?, ?, ?, ?)`,
+        [randomUUID(), id, titles[i], i + 1],
+      );
+    }
+  });
+
+  return id;
 }

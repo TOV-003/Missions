@@ -466,6 +466,11 @@ export default function Tasks() {
               )}
             {display === "pending" && (
               <>
+                <Text
+                  style={{ fontFamily: "Outfit-SemiBold", fontSize: msC(12) }}
+                >
+                  Long press Mission to commit for today
+                </Text>
                 <>
                   {data?.missionsWithSubtasks
                     .filter(

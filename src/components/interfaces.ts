@@ -10,7 +10,7 @@ export interface DailyList {
   id: string;
   user_id: string;
   mission_id: string;
-  commited_at: string;
+  committed_at: string;
 }
 
 export interface TaskCardProps {
@@ -40,13 +40,12 @@ export type Domain =
 
 export interface Mission {
   id: string;
-  user_id: string;
   title: string;
   directive: string;
   target_domain: Domain;
   priority: Priority;
   deadline: string;
-  notify_15_min: boolean;
+  notify_60_min: boolean;
   created_at: string;
   resolved_at: string | null;
 }

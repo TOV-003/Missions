@@ -17,16 +17,21 @@ import {
 } from "@/components/Icons";
 import { msC } from "@/app/index";
 import React from "react";
-import { useMissions } from "@/hooks/useMissions";
+import { useMission } from "@/hooks/useMissions";
 import { TaskCardProps, Subtask } from "@/components/interfaces";
 import Hr from "@/components/hr";
 
 export default function MissionDetails() {
-  const { id } = useLocalSearchParams();
-  const { data, isPending, error } = useMissions();
-  const missionData = data?.missionsWithSubtasks.filter(
-    (mission: TaskCardProps) => mission.id === id,
-  )[0];
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const { data, isPending, error } = useMission(id);
+  if (!data) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text>Error</Text>
+      </SafeAreaView>
+    );
+  }
+  const missionData = data;
   console.log(missionData);
   return (
     <SafeAreaProvider>
@@ -103,7 +108,7 @@ export default function MissionDetails() {
                   color: `${missionData.priority === "critical" ? "white" : "black"}`,
                 }}
               >
-                {missionData.priority.toUpperCase()}
+                {missionData.priority?.toUpperCase()}
               </Text>
               <Text
                 style={{
@@ -120,7 +125,7 @@ export default function MissionDetails() {
                   textAlign: "center",
                 }}
               >
-                {missionData.target_domain.toUpperCase()}
+                {missionData.target_domain?.toUpperCase()}
               </Text>
               <Text
                 style={{
