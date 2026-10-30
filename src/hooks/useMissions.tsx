@@ -4,6 +4,8 @@ import {
   getMission,
   createMission,
   deleteMission,
+  commitMission,
+  removeDailyCommitment,
 } from "@/api/api";
 import { useSQLiteContext } from "expo-sqlite";
 
@@ -45,6 +47,26 @@ export function useDeleteMission() {
 
   return useMutation({
     mutationFn: (id: string) => deleteMission(db, id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+}
+
+export function useCommitMission() {
+  const db = useSQLiteContext();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (missionId: string) => commitMission(db, missionId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+}
+
+export function useRemoveDailyCommitment() {
+  const db = useSQLiteContext();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (missionId: string) => removeDailyCommitment(db, missionId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 }

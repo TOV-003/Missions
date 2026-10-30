@@ -14,7 +14,12 @@ import TaskCard from "@/components/TaskCard";
 import { TaskCardProps, Subtask, DailyList } from "@/components/interfaces";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useDeleteMission, useMissions } from "@/hooks/useMissions";
+import {
+  useCommitMission,
+  useDeleteMission,
+  useMissions,
+  useRemoveDailyCommitment,
+} from "@/hooks/useMissions";
 import { Link } from "expo-router";
 import { LoaderDots } from "@/components/LoaderDots";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
@@ -37,6 +42,8 @@ export default function Tasks() {
 
   const { data, isPending, error, refetch } = useMissions();
   const { mutate: deleteMission } = useDeleteMission();
+  const { mutate: commitMission } = useCommitMission();
+  const { mutate: removeDailyCommitment } = useRemoveDailyCommitment();
   if (isPending)
     return (
       <SafeAreaView>
@@ -122,7 +129,24 @@ export default function Tasks() {
     );
   }
 
-  function renderMission(mission: TaskCardProps, canDelete: boolean) {
+  function commitToToday(mission: TaskCardProps) {
+    commitMission(mission.id, {
+      onError: () =>
+        Alert.alert("Couldn't commit mission", "Please try again."),
+    });
+  }
+
+  function removeFromToday(mission: TaskCardProps) {
+    removeDailyCommitment(mission.id, {
+      onError: () =>
+        Alert.alert("Couldn't remove mission", "Please try again."),
+    });
+  }
+
+  function renderMission(
+    mission: TaskCardProps,
+    swipeMode: "none" | "pending" | "today",
+  ) {
     const missionCard = (
       <Link
         href={{ pathname: "/Tasks/[id]", params: { id: mission.id } }}
@@ -143,7 +167,7 @@ export default function Tasks() {
       </Link>
     );
 
-    if (!canDelete) {
+    if (swipeMode === "none") {
       return <View key={mission.id}>{missionCard}</View>;
     }
 
@@ -152,16 +176,41 @@ export default function Tasks() {
         key={mission.id}
         containerStyle={{ width: "100%" }}
         overshootRight={false}
-        renderRightActions={() => (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`Delete ${mission.title}`}
-            onPress={() => confirmDeleteMission(mission)}
-            style={styles.deleteAction}
-          >
-            <Text style={styles.deleteActionText}>DELETE</Text>
-          </Pressable>
-        )}
+        renderLeftActions={
+          swipeMode === "pending"
+            ? () => (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Commit ${mission.title} for today`}
+                  onPress={() => commitToToday(mission)}
+                  style={styles.commitAction}
+                >
+                  <Text style={styles.commitActionText}>COMMIT</Text>
+                </Pressable>
+              )
+            : undefined
+        }
+        renderRightActions={() =>
+          swipeMode === "pending" ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Delete ${mission.title}`}
+              onPress={() => confirmDeleteMission(mission)}
+              style={styles.deleteAction}
+            >
+              <Text style={styles.deleteActionText}>DELETE</Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Remove ${mission.title} from today`}
+              onPress={() => removeFromToday(mission)}
+              style={styles.removeAction}
+            >
+              <Text style={styles.removeActionText}>REMOVE</Text>
+            </Pressable>
+          )
+        }
       >
         {missionCard}
       </ReanimatedSwipeable>
@@ -452,6 +501,11 @@ export default function Tasks() {
               allDaily.length !== 0 &&
               pendingDaily.length !== 0 && (
                 <>
+                  <Text
+                    style={{ fontFamily: "Outfit-SemiBold", fontSize: msC(12) }}
+                  >
+                    Swipe left to remove from today
+                  </Text>
                   <>
                     {data?.dailyMissionsWithSubtasks
                       .filter(
@@ -459,7 +513,7 @@ export default function Tasks() {
                           mission.resolved_at === null &&
                           mission.priority === "critical",
                       )
-                      .map((mission) => renderMission(mission, false))}
+                      .map((mission) => renderMission(mission, "today"))}
                   </>
                   <>
                     {data?.dailyMissionsWithSubtasks
@@ -468,7 +522,7 @@ export default function Tasks() {
                           mission.resolved_at === null &&
                           mission.priority !== "critical",
                       )
-                      .map((mission) => renderMission(mission, false))}
+                      .map((mission) => renderMission(mission, "today"))}
                   </>
                 </>
               )}
@@ -492,7 +546,7 @@ export default function Tasks() {
                   .filter(
                     (mission: TaskCardProps) => mission.resolved_at !== null,
                   )
-                  .map((mission) => renderMission(mission, false))}
+                  .map((mission) => renderMission(mission, "none"))}
               </>
             )}
 
@@ -515,7 +569,7 @@ export default function Tasks() {
                   <Text
                     style={{ fontFamily: "Outfit-SemiBold", fontSize: msC(12) }}
                   >
-                    Long press Mission to commit for today
+                    Swipe left to delete · Swipe right to commit
                   </Text>
                   <>
                     {data?.missionsWithSubtasks
@@ -524,7 +578,7 @@ export default function Tasks() {
                           mission.resolved_at === null &&
                           mission.priority === "critical",
                       )
-                      .map((mission) => renderMission(mission, true))}
+                      .map((mission) => renderMission(mission, "pending"))}
                   </>
                   <>
                     {data?.missionsWithSubtasks
@@ -533,7 +587,7 @@ export default function Tasks() {
                           mission.resolved_at === null &&
                           mission.priority !== "critical",
                       )
-                      .map((mission) => renderMission(mission, true))}
+                      .map((mission) => renderMission(mission, "pending"))}
                   </>
                 </>
               )}
@@ -562,6 +616,32 @@ const styles = StyleSheet.create({
   },
   deleteActionText: {
     color: "white",
+    fontFamily: "Outfit-Bold",
+    fontSize: msC(12),
+  },
+  commitAction: {
+    alignItems: "center",
+    backgroundColor: "#10B981",
+    borderWidth: msC(2),
+    justifyContent: "center",
+    marginRight: msC(8),
+    paddingHorizontal: msC(16),
+  },
+  commitActionText: {
+    color: "white",
+    fontFamily: "Outfit-Bold",
+    fontSize: msC(12),
+  },
+  removeAction: {
+    alignItems: "center",
+    backgroundColor: "#E7E5DF",
+    borderWidth: msC(2),
+    justifyContent: "center",
+    marginLeft: msC(8),
+    paddingHorizontal: msC(16),
+  },
+  removeActionText: {
+    color: "black",
     fontFamily: "Outfit-Bold",
     fontSize: msC(12),
   },

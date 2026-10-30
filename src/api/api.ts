@@ -126,3 +126,53 @@ export async function createMission(
 export async function deleteMission(db: SQLiteDatabase, id: string) {
   await db.runAsync(`DELETE FROM missions WHERE id = ?`, [id]);
 }
+
+type DailyCommitmentRow = {
+  id: string;
+  committed_at: string;
+};
+
+async function getTodayCommitments(
+  db: SQLiteDatabase,
+  missionId: string,
+) {
+  const today = localDate(new Date());
+  const commitments = await db.getAllAsync<DailyCommitmentRow>(
+    `SELECT id, committed_at FROM daily_commitments WHERE mission_id = ?`,
+    [missionId],
+  );
+
+  return commitments.filter(
+    (commitment) => localDate(commitment.committed_at) === today,
+  );
+}
+
+export async function commitMission(db: SQLiteDatabase, missionId: string) {
+  const existingCommitments = await getTodayCommitments(db, missionId);
+  if (existingCommitments.length > 0) return false;
+
+  await db.runAsync(
+    `INSERT INTO daily_commitments (id, mission_id, committed_at) VALUES (?, ?, ?)`,
+    [randomUUID(), missionId, new Date().toISOString()],
+  );
+
+  return true;
+}
+
+export async function removeDailyCommitment(
+  db: SQLiteDatabase,
+  missionId: string,
+) {
+  const commitments = await getTodayCommitments(db, missionId);
+  if (commitments.length === 0) return false;
+
+  await db.withTransactionAsync(async () => {
+    for (const commitment of commitments) {
+      await db.runAsync(`DELETE FROM daily_commitments WHERE id = ?`, [
+        commitment.id,
+      ]);
+    }
+  });
+
+  return true;
+}
