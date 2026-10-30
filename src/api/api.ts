@@ -122,3 +122,7 @@ export async function createMission(
 
   return id;
 }
+
+export async function deleteMission(db: SQLiteDatabase, id: string) {
+  await db.runAsync(`DELETE FROM missions WHERE id = ?`, [id]);
+}

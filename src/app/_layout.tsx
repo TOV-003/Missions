@@ -5,6 +5,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { msC } from "@/app/index";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SQLiteProvider } from "expo-sqlite";
 import { initializeDatabase } from "@/database/database";
 
@@ -28,9 +29,10 @@ export default function RootLayout() {
 
   if (!loaded && !error) return null;
   return (
-    <SQLiteProvider databaseName="app.db" onInit={initializeDatabase}>
-      <QueryClientProvider client={queryClient}>
-        <KeyboardProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SQLiteProvider databaseName="app.db" onInit={initializeDatabase}>
+        <QueryClientProvider client={queryClient}>
+          <KeyboardProvider>
           <Tabs
             screenOptions={{
               headerShown: false,
@@ -85,8 +87,9 @@ export default function RootLayout() {
               }}
             />
           </Tabs>
-        </KeyboardProvider>
-      </QueryClientProvider>
-    </SQLiteProvider>
+          </KeyboardProvider>
+        </QueryClientProvider>
+      </SQLiteProvider>
+    </GestureHandlerRootView>
   );
 }

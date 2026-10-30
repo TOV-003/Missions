@@ -1,5 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMissions, getMission, createMission } from "@/api/api";
+import {
+  getMissions,
+  getMission,
+  createMission,
+  deleteMission,
+} from "@/api/api";
 import { useSQLiteContext } from "expo-sqlite";
 
 export function useMissions() {
@@ -30,6 +35,16 @@ export function useCreateMission() {
       missionData: any;
       subtaskData?: any[];
     }) => createMission(db, missionData, subtaskData),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+}
+
+export function useDeleteMission() {
+  const db = useSQLiteContext();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteMission(db, id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 }
