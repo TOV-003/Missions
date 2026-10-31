@@ -124,7 +124,129 @@ export async function createMission(
 }
 
 export async function deleteMission(db: SQLiteDatabase, id: string) {
-  await db.runAsync(`DELETE FROM missions WHERE id = ?`, [id]);
+  await db.withTransactionAsync(async () => {
+    await assertMissionUnresolved(db, id);
+    await db.runAsync(`DELETE FROM missions WHERE id = ?`, [id]);
+  });
+}
+
+async function assertMissionUnresolved(db: SQLiteDatabase, missionId: string) {
+  const mission = await db.getFirstAsync<{ resolved_at: string | null }>(
+    `SELECT resolved_at FROM missions WHERE id = ?`,
+    [missionId],
+  );
+
+  if (!mission) {
+    throw new Error("Mission not found.");
+  }
+
+  if (mission.resolved_at !== null) {
+    throw new Error("This mission is resolved and is read-only.");
+  }
+}
+
+export type MissionEditableFields = {
+  target_domain: Mission["target_domain"];
+  priority: Mission["priority"];
+  deadline: string;
+};
+
+export type SubtaskInput = {
+  id?: string;
+  title: string;
+};
+
+export async function updateMission(
+  db: SQLiteDatabase,
+  missionId: string,
+  missionData: MissionEditableFields,
+  subtaskData: SubtaskInput[] = [],
+) {
+  await db.withTransactionAsync(async () => {
+    await assertMissionUnresolved(db, missionId);
+
+    await db.runAsync(
+      `UPDATE missions
+         SET target_domain = ?, priority = ?, deadline = ?
+       WHERE id = ?`,
+      [
+        missionData.target_domain,
+        missionData.priority,
+        missionData.deadline,
+        missionId,
+      ],
+    );
+
+    const existing = await db.getAllAsync<{ id: string }>(
+      `SELECT id FROM subtasks WHERE mission_id = ? ORDER BY position ASC`,
+      [missionId],
+    );
+    const existingIds = new Set(existing.map((subtask) => subtask.id));
+
+    const nextSubtasks = subtaskData
+      .map((subtask) => ({
+        id: subtask.id,
+        title: String(subtask.title ?? "").trim(),
+      }))
+      .filter((subtask) => subtask.title !== "")
+      .slice(0, 4);
+
+    const retainedIds = new Set(
+      nextSubtasks
+        .map((subtask) => subtask.id)
+        .filter(
+          (subtaskId): subtaskId is string =>
+            subtaskId !== undefined && existingIds.has(subtaskId),
+        ),
+    );
+
+    for (const subtask of existing) {
+      if (!retainedIds.has(subtask.id)) {
+        await db.runAsync(`DELETE FROM subtasks WHERE id = ?`, [subtask.id]);
+      }
+    }
+
+    for (let i = 0; i < nextSubtasks.length; i++) {
+      const { id, title } = nextSubtasks[i];
+      const position = i + 1;
+
+      if (id !== undefined && existingIds.has(id)) {
+        // Keep is_done untouched so completion survives edits.
+        await db.runAsync(
+          `UPDATE subtasks SET title = ?, position = ? WHERE id = ?`,
+          [title, position, id],
+        );
+      } else {
+        await db.runAsync(
+          `INSERT INTO subtasks (id, mission_id, title, position, is_done)
+           VALUES (?, ?, ?, ?, 0)`,
+          [randomUUID(), missionId, title, position],
+        );
+      }
+    }
+  });
+}
+
+export async function resolveMission(db: SQLiteDatabase, id: string) {
+  await db.runAsync(
+    `UPDATE missions SET resolved_at = ? WHERE id = ? AND resolved_at IS NULL`,
+    [new Date().toISOString(), id],
+  );
+}
+
+export async function setSubtaskDone(
+  db: SQLiteDatabase,
+  subtaskId: string,
+  missionId: string,
+  isDone: boolean,
+) {
+  await db.withTransactionAsync(async () => {
+    await assertMissionUnresolved(db, missionId);
+    await db.runAsync(
+      `UPDATE subtasks SET is_done = ? WHERE id = ? AND mission_id = ?`,
+      [isDone ? 1 : 0, subtaskId, missionId],
+    );
+  });
 }
 
 type DailyCommitmentRow = {
@@ -132,10 +254,7 @@ type DailyCommitmentRow = {
   committed_at: string;
 };
 
-async function getTodayCommitments(
-  db: SQLiteDatabase,
-  missionId: string,
-) {
+async function getTodayCommitments(db: SQLiteDatabase, missionId: string) {
   const today = localDate(new Date());
   const commitments = await db.getAllAsync<DailyCommitmentRow>(
     `SELECT id, committed_at FROM daily_commitments WHERE mission_id = ?`,
