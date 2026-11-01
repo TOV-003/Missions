@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TextInput,
   Pressable,
@@ -19,6 +18,7 @@ import {
   No,
   Bell,
   Delete,
+  Settings,
 } from "@/components/Icons";
 import { Domain, Mission, Priority, Subtask } from "@/components/interfaces";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
@@ -175,23 +175,32 @@ export default function NewTask() {
               MISSIONS
             </Text>
           </View>
-          <View
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open settings"
+            hitSlop={msC(8)}
+            onPress={() =>
+              router.push({
+                pathname: "/settings",
+                params: { from: "newTask" },
+              })
+            }
             style={{
+              width: msC(32),
+              height: msC(32),
+              backgroundColor: "white",
+              borderWidth: msC(1.5),
+              borderColor: "#000",
+              alignItems: "center",
+              justifyContent: "center",
               shadowColor: "#000",
               shadowOffset: { width: msC(1), height: msC(1) },
               shadowOpacity: 1,
               shadowRadius: 0,
             }}
           >
-            <Image
-              source={require("@/assets/images/PIC.jpg")}
-              style={{
-                width: msC(32),
-                height: msC(32),
-                borderWidth: msC(1.5),
-              }}
-            />
-          </View>
+            <Settings size={msC(20)} />
+          </Pressable>
         </View>
         <KeyboardAwareScrollView
           style={{ width: "100%" }}

@@ -2,7 +2,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   ScrollView,
   Pressable,
   Alert,
@@ -20,8 +19,9 @@ import {
   useMissions,
   useRemoveDailyCommitment,
 } from "@/hooks/useMissions";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { LoaderDots } from "@/components/LoaderDots";
+import { Settings } from "@/components/Icons";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 
 export default function Tasks() {
@@ -236,19 +236,32 @@ export default function Tasks() {
               MISSIONS
             </Text>
           </View>
-          <View
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open settings"
+            hitSlop={msC(8)}
+            onPress={() =>
+              router.push({
+                pathname: "/settings",
+                params: { from: "Tasks" },
+              })
+            }
             style={{
+              width: msC(32),
+              height: msC(32),
+              backgroundColor: "white",
+              borderWidth: msC(1.5),
+              borderColor: "#000",
+              alignItems: "center",
+              justifyContent: "center",
               shadowColor: "#000",
               shadowOffset: { width: msC(1), height: msC(1) },
               shadowOpacity: 1,
               shadowRadius: 0,
             }}
           >
-            <Image
-              source={require("@/assets/images/PIC.jpg")}
-              style={{ width: msC(32), height: msC(32), borderWidth: msC(1.5) }}
-            />
-          </View>
+            <Settings size={msC(20)} />
+          </Pressable>
         </View>
         <ScrollView
           style={{ width: "100%" }}

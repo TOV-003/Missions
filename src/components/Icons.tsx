@@ -217,6 +217,45 @@ const bell = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns=
 </svg>
 `;
 
+const settings = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="3.25" stroke-width="1.8" stroke="#121212"/>
+<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke-width="1.8" stroke-linecap="square" stroke="#121212"/>
+</svg>
+`;
+
+const database = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="12" cy="5.5" rx="7.5" ry="2.75" stroke-width="1.8" stroke="#121212"/>
+<path d="M4.5 5.5V12C4.5 13.52 7.86 14.75 12 14.75C16.14 14.75 19.5 13.52 19.5 12V5.5" stroke-width="1.8" stroke-linecap="square" stroke="#121212"/>
+<path d="M4.5 12V18.5C4.5 20.02 7.86 21.25 12 21.25C16.14 21.25 19.5 20.02 19.5 18.5V12" stroke-width="1.8" stroke-linecap="square" stroke="#121212"/>
+</svg>
+`;
+
+const device = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="6.5" y="1.75" width="11" height="20.5" stroke-width="1.8" stroke-linecap="square" stroke="#121212"/>
+<path d="M10.5 18.5H13.5" stroke-width="1.8" stroke-linecap="square" stroke="#121212"/>
+</svg>
+`;
+
+const info = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="9.25" stroke-width="1.8" stroke="#121212"/>
+<path d="M12 11V16.5" stroke-width="1.8" stroke-linecap="square" stroke="#121212"/>
+<path d="M12 7.75V8" stroke-width="1.8" stroke-linecap="square" stroke="#121212"/>
+</svg>
+`;
+
+export function Settings({ size = 40 }: { size?: number }) {
+  return <SvgXml xml={settings} width={size} height={size} />;
+}
+export function Database({ size = 40 }: { size?: number }) {
+  return <SvgXml xml={database} width={size} height={size} />;
+}
+export function Device({ size = 40 }: { size?: number }) {
+  return <SvgXml xml={device} width={size} height={size} />;
+}
+export function Info({ size = 40 }: { size?: number }) {
+  return <SvgXml xml={info} width={size} height={size} />;
+}
+
 export function Clock({ size = 40 }: { size?: number }) {
   return <SvgXml xml={clock} width={size} height={size} />;
 }

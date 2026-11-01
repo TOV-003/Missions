@@ -75,6 +75,13 @@ export default function RootLayout() {
               }}
             />
             <Tabs.Screen
+              name="settings"
+              options={{
+                href: null,
+                tabBarStyle: { display: "none" },
+              }}
+            />
+            <Tabs.Screen
               name="Tasks"
               options={{
                 title: "Missions",
